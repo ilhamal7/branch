@@ -12,20 +12,35 @@ const ctx = (() => {
     let d = document.createElement("div");
     d.style.textAlign = "center";
     body.append(d);
+
     let c = document.createElement("canvas");
-    c.width = 2 * CSIZE;
-    c.height = 2 * CSIZE;
+
+    // 💡 Tambahin responsif high-DPI di sini
+    const ratio = window.devicePixelRatio || 1;
+    const size = 2 * CSIZE;
+    c.width = size * ratio;
+    c.height = size * ratio;
+    c.style.width = size + "px";
+    c.style.height = size + "px";
+
     d.append(c);
-    return c.getContext("2d");
+
+    const ctx = c.getContext("2d");
+    ctx.scale(ratio, ratio);
+
+    return ctx;
 })();
 ctx.translate(CSIZE, CSIZE);
 ctx.lineCap = "round";
 
 onresize = () => {
-    let D = Math.min(window.innerWidth, window.innerHeight) - 40;
-    ctx.canvas.style.width = D + "px";
-    ctx.canvas.style.height = D + "px";
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+    let scale = Math.min(w / (2 * CSIZE), h / (2 * CSIZE));
+    ctx.canvas.style.transform = `scale(${scale})`;
+    ctx.canvas.style.transformOrigin = "center";
 };
+
 
 const getRandomInt = (min, max, low) => {
     if (low) return Math.floor(Math.random() * Math.random() * (max - min)) + min;
